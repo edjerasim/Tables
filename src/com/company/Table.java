@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class Table {
     private Cell[][] data; // Матрица от клетки
@@ -105,23 +106,88 @@ public class Table {
 
 
     public void editCell(int row, int col, String newValue) {
-        // По-напред може да добавите валидация и обработка на грешки, ако е необходимо
-        CellType newType = CellType.TEXT; // Тип по подразбиране - текст
-
         try {
-            // Опитайте се да преобразувате новата стойност към друг тип според определени правила
-            if (newValue.matches("-?\\d+")) {
-                newType = CellType.INTEGER;
-            } else if (newValue.matches("-?\\d+(\\.\\d+)?")) {
-                newType = CellType.DECIMAL;
-            }
-        } catch (NumberFormatException e) {
-            // Ако не успеете да преобразувате, запазвайте типа като текст
-            newType = CellType.TEXT;
-        }
+            // Опитай се да преобразуваш новата стойност към типа на клетката
+            CellType newType = determineCellType(newValue);
 
-        // Задаване на новия тип на клетката
-        data[row][col] = new Cell(newValue, newType);
+            // Ако клетката е празна, инициализирай с новата стойност и тип
+            if (data[row][col] == null) {
+                data[row][col] = new Cell(newValue, newType);
+            } else {
+                // Ако клетката не е празна, промени стойността и типа
+                data[row][col].setValue(newValue);
+                data[row][col].setType(newType);
+            }
+
+            System.out.println("Клетката е успешно променена.");
+        } catch (NumberFormatException e) {
+            // Ако не успееш да преобразуваш, изведи съобщение за грешка
+            System.out.println("Невалидни данни. Клетката не е променена.");
+        }
+    }
+
+    public void loadFromFile(String fileName) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+
+            int row = 0;
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+                // Ако текущият ред не съдържа данни, пропусни го
+                if (values.length == 0) {
+                    continue;
+                }
+
+                // Инициализация на броя на колоните, ако не е направена
+                if (data.length <= row) {
+                    data = Arrays.copyOf(data, row + 1);
+                }
+
+                if (data[row] == null) {
+                    data[row] = new Cell[values.length];
+                } else {
+                    // Ако редът е вече създаден, но колоните са по-малко, уголеми ги
+                    if (values.length > data[row].length) {
+                        data[row] = Arrays.copyOf(data[row], values.length);
+                    }
+                }
+
+                for (int col = 0; col < values.length; col++) {
+                    String cellValue = values[col].trim();
+
+                    // Премахване на кавичките, ако са присътствали
+                    if (cellValue.startsWith("\"") && cellValue.endsWith("\"")) {
+                        cellValue = cellValue.substring(1, cellValue.length() - 1);
+                    }
+
+                    CellType cellType = determineCellType(cellValue);
+
+                    // Извиквай setCell само ако col е валиден индекс за текущия ред
+                    if (col < data[row].length) {
+                        setCell(row, col, new Cell(cellValue, cellType));
+                    }
+                }
+                row++;
+            }
+
+            reader.close();
+            System.out.println("Данните са заредени успешно от файл " + fileName);
+        } catch (Exception e) {
+            System.out.println("Грешка при зареждане от файл " + fileName);
+            e.printStackTrace();
+        }
+    }
+
+
+    private CellType determineCellType(String value) {
+        if (value.matches("-?\\d+")) {
+            return CellType.INTEGER;
+        } else if (value.matches("-?\\d+(\\.\\d+)?")) {
+            return CellType.DECIMAL;
+        } else {
+            return CellType.TEXT;
+        }
     }
 
 }
