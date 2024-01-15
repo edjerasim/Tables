@@ -106,24 +106,23 @@ public class Table {
 
 
     public void editCell(int row, int col, String newValue) {
+        // По-напред може да добавите валидация и обработка на грешки, ако е необходимо
+        CellType newType = CellType.TEXT; // Тип по подразбиране - текст
+
         try {
-            // Опитай се да преобразуваш новата стойност към типа на клетката
-            CellType newType = determineCellType(newValue);
-
-            // Ако клетката е празна, инициализирай с новата стойност и тип
-            if (data[row][col] == null) {
-                data[row][col] = new Cell(newValue, newType);
-            } else {
-                // Ако клетката не е празна, промени стойността и типа
-                data[row][col].setValue(newValue);
-                data[row][col].setType(newType);
+            // Опитайте се да преобразувате новата стойност към друг тип според определени правила
+            if (newValue.matches("-?\\d+")) {
+                newType = CellType.INTEGER;
+            } else if (newValue.matches("-?\\d+(\\.\\d+)?")) {
+                newType = CellType.DECIMAL;
             }
-
-            System.out.println("Клетката е успешно променена.");
         } catch (NumberFormatException e) {
-            // Ако не успееш да преобразуваш, изведи съобщение за грешка
-            System.out.println("Невалидни данни. Клетката не е променена.");
+            // Ако не успеете да преобразувате, запазвайте типа като текст
+            newType = CellType.TEXT;
         }
+
+        // Задаване на новия тип на клетката
+        data[row][col] = new Cell(newValue, newType);
     }
 
     public void loadFromFile(String fileName) {
@@ -188,6 +187,16 @@ public class Table {
         } else {
             return CellType.TEXT;
         }
+    }
+    public int getRowCount() {
+        return data.length;
+    }
+
+    public int getColCount() {
+        if (data.length == 0 || data[0] == null) {
+            return 0;
+        }
+        return data[0].length;
     }
 
 }

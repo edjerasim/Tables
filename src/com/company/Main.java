@@ -39,12 +39,25 @@ public class Main {
                     if (fileName.isEmpty()) {
                         System.out.println("Please set the file path first.");
                     } else {
-                        System.out.print("Select row and col for edit: ");
-                        int row = scanner.nextInt();
-                        int col = scanner.nextInt();
-                        System.out.print("Enter new value: ");
-                        String newValue = scanner.next();
-                        table.editCell(row, col, newValue);
+                        System.out.print("Enter row for edit: ");
+                        int editRow = scanner.nextInt();
+                        scanner.nextLine(); // Добави този ред, за да прочетеш новия ред// Проверка дали реда съществува
+                        if (editRow >= 0 && editRow < table.getRowCount()) {
+                            System.out.print("Enter column for edit: ");
+                            int editCol = scanner.nextInt();
+                            scanner.nextLine(); // Добави този ред
+
+                            // Проверка дали колоната съществува
+                            if (editCol >= 0 && editCol < table.getColCount()) {
+                                System.out.print("Enter new value: ");
+                                String newValue = scanner.nextLine();
+                                table.editCell(editRow, editCol, newValue);
+                            } else {
+                                System.out.println("Invalid column.");
+                            }
+                        } else {
+                            System.out.println("Invalid row.");
+                        }
                     }
                     break;
                 case 3:
