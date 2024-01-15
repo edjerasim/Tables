@@ -106,23 +106,33 @@ public class Table {
 
 
     public void editCell(int row, int col, String newValue) {
-        // По-напред може да добавите валидация и обработка на грешки, ако е необходимо
-        CellType newType = CellType.TEXT; // Тип по подразбиране - текст
-
-        try {
-            // Опитайте се да преобразувате новата стойност към друг тип според определени правила
-            if (newValue.matches("-?\\d+")) {
-                newType = CellType.INTEGER;
-            } else if (newValue.matches("-?\\d+(\\.\\d+)?")) {
-                newType = CellType.DECIMAL;
-            }
-        } catch (NumberFormatException e) {
-            // Ако не успеете да преобразувате, запазвайте типа като текст
-            newType = CellType.TEXT;
+        // Проверка дали реда съществува
+        if (row < 0 || row >= getRowCount()) {
+            System.out.println("Invalid row.");
+            return;
         }
 
-        // Задаване на новия тип на клетката
-        data[row][col] = new Cell(newValue, newType);
+        // Проверка дали колоната съществува
+        if (col < 0 || col >= getColCount()) {
+            System.out.println("Invalid column.");
+            return;
+        }
+
+        // Пазете предишния тип на клетката
+        CellType oldType = data[row][col].getType();
+
+        // Опитайте се да преобразувате новата стойност към друг тип според определени правила
+        CellType newType = determineCellType(newValue);
+
+        // Ако новият тип не съвпада с предишния, създайте нова клетка с новия тип
+        if (newType != oldType) {
+            data[row][col] = new Cell(newValue, newType);
+        } else {
+            // В противен случай, просто променете стойността на текущата клетка
+            data[row][col].setValue(newValue);
+        }
+
+        System.out.println("Cell edited successfully.");
     }
 
     public void loadFromFile(String fileName) {
