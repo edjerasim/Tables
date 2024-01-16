@@ -103,8 +103,6 @@ public class Table {
     }
 
 
-
-
     public void editCell(int row, int col, String newValue) {
         // Проверка дали реда съществува
         if (row < 0 || row >= getRowCount()) {
@@ -118,44 +116,24 @@ public class Table {
             return;
         }
 
+        // Проверка дали стойността е празна
+        if (newValue.isEmpty()) {
+            // Променете стойността на текущата клетка на празна стойност
+            data[row][col] = null;
+            return;
+        }
+
         Cell cell = data[row][col];
-        CellType oldType = cell.getType();
 
         // Опитайте се да преобразувате новата стойност към типа на клетката
         CellType newType = determineCellType(newValue);
 
-        // Проверка дали типът на клетката съвпада с новия тип
-        if (newType != oldType) {
-            System.out.println("Invalid data type. Expected: " + oldType + ", Got: " + newType);
-            return;
-        }
-
         // Променете стойността на текущата клетка
-        if (newType == oldType) {
-            cell.setValue(newValue);
-        } else {
-            // Ако новият тип не съвпада с предишния, създайте нова клетка с новия тип
-            Cell newCell = new Cell(newValue, newType);
-
-            // Проверка дали редът е създаден
-            if (data[row] == null) {
-                data[row] = new Cell[col + 1];
-            } else if (col >= data[row].length) {
-                // Ако редът е вече създаден, но колоната е по-голяма, уголеми ги
-                int newSize = col + 1;
-                data[row] = Arrays.copyOf(data[row], newSize);
-
-                for (int i = data[row].length; i < newSize; i++) {
-                    data[row][i] = new Cell("", CellType.TEXT); // По подразбиране, задайте празни стойности на новите клетки
-                }
-            }
-
-            // Задайте новата клетка в матрицата
-            data[row][col] = newCell;
-        }
-
-        System.out.println("Cell edited successfully.");
+        cell.setValue(newValue);
+        cell.setType(newType);
     }
+
+
 
     public void loadFromFile(String fileName) {
         try {
@@ -164,11 +142,13 @@ public class Table {
 
             int row = 0;
             while ((line = reader.readLine()) != null) {
-                String[] values = line.split(",");
                 // Ако текущият ред не съдържа данни, пропусни го
-                if (values.length == 0) {
+                if (line.trim().isEmpty()) {
+                    row++;
                     continue;
                 }
+
+                String[] values = line.split(",", -1);
 
                 // Инициализация на броя на колоните, ако не е направена
                 if (data.length <= row) {
@@ -209,6 +189,7 @@ public class Table {
             e.printStackTrace();
         }
     }
+
 
 
     private CellType determineCellType(String value) {
