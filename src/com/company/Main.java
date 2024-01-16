@@ -40,11 +40,12 @@ public class Main {
                         System.out.println("Please set the file path first.");
                     } else {
                         System.out.print("Enter row for edit: ");
-                        int editRow = scanner.nextInt();
-                        scanner.nextLine(); // Добави този ред, за да прочетеш новия ред// Проверка дали реда съществува
+                        int editRow = scanner.nextInt() - 1;
+                        scanner.nextLine(); // Добави този ред, за да прочетеш новия ред
+                        // Проверка дали реда съществува
                         if (editRow >= 0 && editRow < table.getRowCount()) {
                             System.out.print("Enter column for edit: ");
-                            int editCol = scanner.nextInt();
+                            int editCol = scanner.nextInt() -1 ;
                             scanner.nextLine(); // Добави този ред
 
                             // Проверка дали колоната съществува
@@ -52,6 +53,8 @@ public class Main {
                                 System.out.print("Enter new value: ");
                                 String newValue = scanner.nextLine();
                                 table.editCell(editRow, editCol, newValue);
+                                table.saveToFile(fileName); // Запазване след успешна редакция
+                                System.out.println("Cell edited successfully.");
                             } else {
                                 System.out.println("Invalid column.");
                             }

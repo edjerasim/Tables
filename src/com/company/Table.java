@@ -118,18 +118,40 @@ public class Table {
             return;
         }
 
-        // Пазете предишния тип на клетката
-        CellType oldType = data[row][col].getType();
+        Cell cell = data[row][col];
+        CellType oldType = cell.getType();
 
-        // Опитайте се да преобразувате новата стойност към друг тип според определени правила
+        // Опитайте се да преобразувате новата стойност към типа на клетката
         CellType newType = determineCellType(newValue);
 
-        // Ако новият тип не съвпада с предишния, създайте нова клетка с новия тип
+        // Проверка дали типът на клетката съвпада с новия тип
         if (newType != oldType) {
-            data[row][col] = new Cell(newValue, newType);
+            System.out.println("Invalid data type. Expected: " + oldType + ", Got: " + newType);
+            return;
+        }
+
+        // Променете стойността на текущата клетка
+        if (newType == oldType) {
+            cell.setValue(newValue);
         } else {
-            // В противен случай, просто променете стойността на текущата клетка
-            data[row][col].setValue(newValue);
+            // Ако новият тип не съвпада с предишния, създайте нова клетка с новия тип
+            Cell newCell = new Cell(newValue, newType);
+
+            // Проверка дали редът е създаден
+            if (data[row] == null) {
+                data[row] = new Cell[col + 1];
+            } else if (col >= data[row].length) {
+                // Ако редът е вече създаден, но колоната е по-голяма, уголеми ги
+                int newSize = col + 1;
+                data[row] = Arrays.copyOf(data[row], newSize);
+
+                for (int i = data[row].length; i < newSize; i++) {
+                    data[row][i] = new Cell("", CellType.TEXT); // По подразбиране, задайте празни стойности на новите клетки
+                }
+            }
+
+            // Задайте новата клетка в матрицата
+            data[row][col] = newCell;
         }
 
         System.out.println("Cell edited successfully.");
