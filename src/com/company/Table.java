@@ -119,18 +119,26 @@ public class Table {
         // Проверка дали стойността е празна
         if (newValue.isEmpty()) {
             // Променете стойността на текущата клетка на празна стойност
+            if (data[row] == null) {
+                data[row] = new Cell[col + 1];
+            } else if (col >= data[row].length) {
+                data[row] = Arrays.copyOf(data[row], col + 1);
+            }
             data[row][col] = null;
             return;
         }
 
-        Cell cell = data[row][col];
-
-        // Опитайте се да преобразувате новата стойност към типа на клетката
-        CellType newType = determineCellType(newValue);
-
         // Променете стойността на текущата клетка
-        cell.setValue(newValue);
-        cell.setType(newType);
+        if (data[row] == null) {
+            data[row] = new Cell[col + 1];
+        } else if (col >= data[row].length) {
+            data[row] = Arrays.copyOf(data[row], col + 1);
+        }
+
+        Cell cell = data[row][col];
+        CellType newType = determineCellType(newValue);
+        // Променете стойността на текущата клетка
+        data[row][col] = new Cell(newValue, newType);
     }
 
 
