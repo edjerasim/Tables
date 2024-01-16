@@ -142,8 +142,15 @@ public class Table {
 
             int row = 0;
             while ((line = reader.readLine()) != null) {
-                // Ако текущият ред не съдържа данни, пропусни го
+                // Ако текущият ред не съдържа данни, празен ред
                 if (line.trim().isEmpty()) {
+                    if (data.length <= row) {
+                        data = Arrays.copyOf(data, row + 1);
+                    }
+
+                    // Инициализирай нов ред с празни клетки
+                    data[row] = new Cell[0];
+
                     row++;
                     continue;
                 }
