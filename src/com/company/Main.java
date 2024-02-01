@@ -58,7 +58,6 @@ public class Main {
                             System.out.println("------------------\n");
                             System.out.print("Write save option: ");
                             String saveOption = scanner.nextLine();
-                            scanner.nextLine(); // Прочитаме новия ред
                             if ("save_as".equals(saveOption)) {
                                 System.out.print("Enter file path to save as: ");
                                 String newFilePath = scanner.nextLine();
