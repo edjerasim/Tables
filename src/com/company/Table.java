@@ -52,9 +52,9 @@ public class Table {
             }
 
             writer.close();
-            System.out.println("Данните са записани успешно във файл " + fileName);
+            System.out.println("Saved successfully " + fileName);
         } catch (IOException e) {
-            System.out.println("Грешка при запис във файл " + fileName);
+            System.out.println("Error while saving " + fileName);
             e.printStackTrace();
         }
     }
@@ -198,9 +198,9 @@ public class Table {
             }
 
             reader.close();
-            System.out.println("Данните са заредени успешно от файл " + fileName);
+            System.out.println("Uploaded successfully " + fileName);
         } catch (Exception e) {
-            System.out.println("Грешка при зареждане от файл " + fileName);
+            System.out.println("Error while uploading " + fileName);
             e.printStackTrace();
         }
     }
@@ -212,6 +212,8 @@ public class Table {
             return CellType.INTEGER;
         } else if (value.matches("-?\\d+(\\.\\d+)?")) {
             return CellType.DECIMAL;
+        } else if (value.matches("\".*\"")) {
+            return CellType.STRING;
         } else {
             return CellType.TEXT;
         }
