@@ -145,6 +145,13 @@ public class Table {
 
     public void loadFromFile(String fileName) {
         try {
+            File file = new File(fileName);
+
+            // Проверка дали файлът е валиден
+            if (!file.exists()) {
+                System.out.println("Error: The specified file does not exist.");
+                return;
+            }
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line;
 
